@@ -1,0 +1,44 @@
+{
+  "cleanupPeriodDays": 365,
+  "autoUpdatesChannel": "latest",
+  "tui": "fullscreen",
+  "skipWorkflowUsageWarning": true,
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "opus"
+  },
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet test:*)",
+      "Bash(dotnet --info)"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Bash(sqlcmd:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
+    ],
+    "environment": [
+      "### Org-wide",
+      "**Organization**: Tecnintegra (Tecnología, Integración y Talento, S.L.) — code author JMMFH (José María Mena); GitHub owner `JMMFH`",
+      "**Cloud provider(s)**: None configured — projects run on self-hosted, on-premises servers",
+      "**Repository visibility**: repositories under `github.com/JMMFH` — assume private unless the remote host and repo name indicate otherwise, or a visibility check in the transcript shows public",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: secrets, API keys and connection strings are never versioned and never logged; each project's `.claude/settings.json` describes where they live",
+      "**Network posture**: self-hosted/on-premises only",
+      "**Source control**: GitHub owner `JMMFH` only (no additional orgs configured)",
+      "**Trusted cloud buckets**: None configured",
+      "**Internal package registry**: None configured — NuGet restores observed against `api.nuget.org`",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (hyphen/underscore/dot-delimited — e.g. matches `prod-db`, not `producer`)",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources, and anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development across Tecnintegra projects — .NET solutions, SQL Server (stored procedures, SSDT), PowerShell scripts",
+      "**Org-specific CLIs**: `dotnet` (build/restore/run), `sqlcmd` (SQL Server), `powershell`",
+      "**Project management files**: every project keeps `CLAUDE.md`, `ESTADO.md` and `PENDIENTES.md` at its root and the commands `/inicio`, `/cierre`, `/decision`, `/importar-diseno` under `.claude/commands/` (from `JMMFH/plantilla-proyecto`)",
+      "**Git**: the user manages git manually; Claude never commits or pushes — it proposes the commit message and the file list"
+    ]
+  }
+}
