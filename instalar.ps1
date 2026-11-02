@@ -3,15 +3,17 @@
 # Autor   : JMMFH (José María Mena)
 # Fecha   : 02/11/2026
 # Desc.   : Copia la configuración global de Claude Code
-#           (settings.json y CLAUDE.md) a %USERPROFILE%\.claude,
-#           guardando copia de los archivos existentes.
+#           (settings.json, CLAUDE.md y referencias *.md) a
+#           %USERPROFILE%\.claude. Antes guarda copia de los
+#           archivos existentes en D:\ClaudeBackup\<fecha-hora>\.
 #           Con -ProgramarBackup crea además la tarea diaria
 #           de copia de seguridad del historial.
-# Uso     : .\instalar.ps1 [-ProgramarBackup]
+# Uso     : .\instalar.ps1 [-ProgramarBackup] [-CarpetaCopias D:\ClaudeBackup]
 # ============================================================
 
 param(
-    [switch]$ProgramarBackup
+    [switch]$ProgramarBackup,
+    [string]$CarpetaCopias = 'D:\ClaudeBackup'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -19,13 +21,18 @@ $ErrorActionPreference = 'Stop'
 $origen  = $PSScriptRoot
 $destino = Join-Path $HOME '.claude'
 $marca   = Get-Date -Format 'yyyyMMdd-HHmmss'
+$copias  = Join-Path $CarpetaCopias "config-anterior-$marca"
 
 if (-not (Test-Path $destino)) {
     New-Item -ItemType Directory -Path $destino | Out-Null
     Write-Host "Creada carpeta $destino"
 }
 
-foreach ($archivo in @('settings.json', 'CLAUDE.md')) {
+# settings.json, CLAUDE.md y cualquier referencia *.md (wpf.md, ...), salvo README.md
+$archivos = @('settings.json', 'CLAUDE.md') +
+            (Get-ChildItem $origen -Filter *.md | Where-Object { $_.Name -notin 'CLAUDE.md', 'README.md' } | Select-Object -ExpandProperty Name)
+
+foreach ($archivo in $archivos) {
     $src = Join-Path $origen  $archivo
     $dst = Join-Path $destino $archivo
 
@@ -35,9 +42,9 @@ foreach ($archivo in @('settings.json', 'CLAUDE.md')) {
     }
 
     if (Test-Path $dst) {
-        $copia = "$dst.$marca.bak"
-        Copy-Item $dst $copia
-        Write-Host "Copia de seguridad: $copia"
+        New-Item -ItemType Directory -Force -Path $copias | Out-Null
+        Copy-Item $dst (Join-Path $copias $archivo)
+        Write-Host "Copia previa: $(Join-Path $copias $archivo)"
     }
 
     Copy-Item $src $dst -Force
