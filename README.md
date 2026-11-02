@@ -12,6 +12,9 @@ Configuración de usuario de Claude Code, versionada para tenerla idéntica en t
 | `backup-claude.ps1` | — | Copia acumulativa del historial de sesiones y la configuración a OneDrive |
 | `programar-backup.ps1` | — | Crea la tarea programada diaria que ejecuta el backup |
 | `nuevo-proyecto.ps1` | — | Crea un proyecto nuevo a partir de [`JMMFH/plantilla-proyecto`](https://github.com/JMMFH/plantilla-proyecto) |
+| `migrar-memorias.ps1` | — | Copia las memorias locales de Claude Code de un proyecto a su `Documentacion\memoria\` |
+| `wpf.md` | `%USERPROFILE%\.claude\wpf.md` | Patrones técnicos recurrentes de WPF |
+| `Normas_Desarrollo_Corporativas.md` | `%USERPROFILE%\.claude\Normas_Desarrollo_Corporativas.md` | Norma corporativa completa de código y BD (maestro; se edita aquí) |
 
 ## Instalación en un equipo nuevo
 
@@ -34,6 +37,16 @@ Si PowerShell bloquea los scripts: `Set-ExecutionPolicy -Scope CurrentUser Remot
 ```powershell
 .\nuevo-proyecto.ps1 -Nombre MiProyecto -Cliente "Nombre del cliente"
 ```
+
+## Memorias de proyecto
+
+Al cerrar una sesión de Claude Code en un proyecto:
+
+```powershell
+.\migrar-memorias.ps1 -Proyecto D:\Proyectos\MiProyecto
+```
+
+Copia `%USERPROFILE%\.claude\projects\<slug>\memory\*.md` a `MiProyecto\Documentacion\memoria\`. Con `-Todos` recorre todos los repositorios bajo `D:\Proyectos`. Con `-OrigenClaude` se puede apuntar a la carpeta `.claude` de otro equipo (por ejemplo, una copia en OneDrive).
 
 ## Copia de seguridad del historial
 
