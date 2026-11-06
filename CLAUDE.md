@@ -24,6 +24,30 @@ Norma corporativa completa de código y BD: `~/.claude/Normas_Desarrollo_Corpora
 - **Componente estético** (iconos, pantallas, maquetas): decidir primero la dirección enseñándole varias opciones en una maqueta HTML sobre el mismo contenido; fijar las reglas técnicas después. Verificar mirando el resultado, no solo midiendo.
 - Verificar a fondo donde el error cuesta caro (SQL, datos, esquemas, nombres de columnas/SP, dinero); en cambios de bajo riesgo (textos, XAML acotado, logs) ir directo.
 
+## Cómo construimos: paso a paso, de fuera hacia dentro
+
+El usuario tiene que entender y controlar el código a medida que se hace. Terminar rápido tocando ocho ficheros en cinco proyectos no vale si él se queda fuera. Por eso:
+
+**Modo por defecto: paso a paso.** Toda funcionalidad recorre estas fases, en este orden, y cada fase espera su "sigue":
+
+1. **Idea**: qué queremos conseguir y qué problema del usuario resuelve, en pocas líneas. Acordado antes de nada.
+2. **Maqueta**: cómo se ve. HTML con la hoja de estilos real, varias opciones si hay duda estética, abierta con `Start-Process` para elegir. La maqueta es el contrato de la funcionalidad.
+3. **Presentación funcional**: la pantalla real (WPF, web, móvil) tal cual la maqueta, con su ViewModel y datos de prueba. Se puede abrir y tocar aunque por debajo no haya nada. De aquí sale qué datos necesita el modelo.
+4. **Hacia dentro, capa a capa**: modelo → aplicación/negocio → repositorio → SP y tablas. Cada capa es un paso.
+
+Reglas del paso a paso:
+- **Un paso cada vez.** Nunca avanzar en otra capa, otro módulo u otro proyecto "ya que estoy". Nada que no esté en el paso actual.
+- **Al cerrar cada paso**: qué ficheros se han tocado, qué hace cada uno y por qué así, en dos o tres líneas de persona. Es para que aprenda, no solo para que apruebe.
+- **Una funcionalidad grande se trocea** en funcionalidades pequeñas que recorran las cuatro fases enteras; no se hace la fase 1 de todo y luego la 2 de todo.
+- Si en medio de un paso aparece algo que afecta a otra capa, se anota en `PENDIENTES.md` y se sigue con el paso.
+
+**Modo directo, solo cuando él lo pide.** Con "modo directo" Claude ejecuta la tarea de tirón y al final lista qué ha tocado y por qué. Con "modo paso a paso" se vuelve al modo por defecto. Lo decide el usuario, no el tamaño de la tarea; Claude nunca pasa a directo por su cuenta.
+
+**El mapa del proyecto.** Cada proyecto tiene `MAPA.md` en la raíz: qué piezas existen (un párrafo por proyecto de la solución), cómo se conectan (cajas y flechas), el vocabulario propio (una línea por concepto) y dónde está cada cosa. Cabe en una pantalla.
+- `/inicio` lo enseña antes de nada; `/cierre` lo actualiza si ha cambiado algo.
+- Si al leerlo el usuario no entiende algo, eso es una tarea de explicar, no de programar.
+- Si el proyecto no tiene mapa o está desfasado, se hace primero `/mapa` (solo lectura) antes de construir nada.
+
 ## Qué ejecuta Claude y qué ejecuta el usuario
 
 | Claude, sin pedir permiso | Solo el usuario (Claude entrega el comando exacto) |
@@ -44,12 +68,13 @@ Todo proyecto Tecnintegra tiene en su raíz (plantilla `JMMFH/plantilla-proyecto
 | Archivo | Qué es |
 |---|---|
 | `CLAUDE.md` | Contexto, estructura y reglas del proyecto |
+| `MAPA.md` | Mapa del proyecto: piezas, conexiones, vocabulario, dónde está cada cosa |
 | `ESTADO.md` | Punto exacto en que está el trabajo: en curso, siguiente paso, bloqueos |
 | `PENDIENTES.md` | **La única lista de tareas** del proyecto, por prioridad (incluye el backlog de versiones futuras) |
 | `Documentacion/decisiones/` | Registro de decisiones de diseño, una por archivo |
 | `Documentacion/diseno/` | Resúmenes de los chats de diseño hechos en claude.ai |
 | `Documentacion/memoria/` | Memorias de Claude Code del proyecto (aprendizajes, feedback, referencias), versionadas |
-| `.claude/commands/` | `/inicio`, `/cierre`, `/decision`, `/importar-diseno` |
+| `.claude/commands/` | `/inicio`, `/cierre`, `/funcionalidad`, `/mapa`, `/decision`, `/importar-diseno` |
 
 - Si un proyecto no tiene estos archivos, proponer crearlos desde la plantilla antes de empezar.
 - Al empezar una sesión, leer `ESTADO.md` y `PENDIENTES.md` (el hook de inicio los carga; si no aparecen, leerlos). Leer también `Documentacion/memoria/` cuando exista.
