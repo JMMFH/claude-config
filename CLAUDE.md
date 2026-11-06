@@ -36,10 +36,18 @@ El usuario tiene que entender y controlar el código a medida que se hace. Termi
 4. **Hacia dentro, capa a capa**: modelo → aplicación/negocio → repositorio → SP y tablas. Cada capa es un paso.
 
 Reglas del paso a paso:
+- **Una sola cosa abierta.** Una funcionalidad en curso en total, no una por proyecto. No se empieza otra hasta cerrar la anterior, aunque sea pequeña. Si "En curso" de `ESTADO.md` tiene dos líneas, algo va mal: se cierra una antes de seguir.
 - **Un paso cada vez.** Nunca avanzar en otra capa, otro módulo u otro proyecto "ya que estoy". Nada que no esté en el paso actual.
 - **Al cerrar cada paso**: qué ficheros se han tocado, qué hace cada uno y por qué así, en dos o tres líneas de persona. Es para que aprenda, no solo para que apruebe.
+- **Un commit por paso**, propuesto por Claude y hecho por el usuario, con un mensaje que cuente el porqué. El historial de git es la historia legible del proyecto; un commit que mezcla cinco cosas no cuenta nada.
 - **Una funcionalidad grande se trocea** en funcionalidades pequeñas que recorran las cuatro fases enteras; no se hace la fase 1 de todo y luego la 2 de todo.
 - Si en medio de un paso aparece algo que afecta a otra capa, se anota en `PENDIENTES.md` y se sigue con el paso.
+- **Explicación de vuelta al cerrar una funcionalidad**: el usuario explica a Claude, en sus palabras, qué se ha construido y cómo fluye; Claude corrige y completa. Lo que el usuario no sabe explicar se convierte en una tarea de explicar en `PENDIENTES.md`. Es lo que convierte el trabajo en conocimiento suyo.
+
+**Presupuesto de piezas.** Un sistema complejo que funciona viene siempre de uno simple que funcionaba. Para un desarrollador solo, muchos proyectos en una solución son una señal de alarma, no de madurez.
+- Cada proyecto nuevo en una solución necesita una decisión registrada (`/decision`) que diga qué problema resuelve que no se pueda resolver dentro de una pieza existente.
+- `/mapa` propone siempre qué piezas se podrían fusionar o eliminar; el usuario decide.
+- Ante la duda entre crear una pieza o ampliar una existente, ampliar.
 
 **Modo directo, solo cuando él lo pide.** Con "modo directo" Claude ejecuta la tarea de tirón y al final lista qué ha tocado y por qué. Con "modo paso a paso" se vuelve al modo por defecto. Lo decide el usuario, no el tamaño de la tarea; Claude nunca pasa a directo por su cuenta.
 
@@ -48,12 +56,14 @@ Reglas del paso a paso:
 - Si al leerlo el usuario no entiende algo, eso es una tarea de explicar, no de programar.
 - Si el proyecto no tiene mapa o está desfasado, se hace primero `/mapa` (solo lectura) antes de construir nada.
 
+**Retro cada dos semanas** (`/retro`, diez minutos): qué confundió al usuario, qué hizo Claude que no quería, qué tuvo que repetir. Cada respuesta se convierte en una regla de `CLAUDE.md` (del proyecto o global) o en una tarea. Las reglas de esta guía nacen ahí, no de un agobio.
+
 ## Qué ejecuta Claude y qué ejecuta el usuario
 
 | Claude, sin pedir permiso | Solo el usuario (Claude entrega el comando exacto) |
 |---|---|
 | `dotnet build`, `dotnet test`, Build del `.sqlproj` con MSBuild, para verificar lo que acaba de escribir | `dotnet publish`, `dotnet pack`, `nuget push`, publish del SSDT, empaquetados, despliegues: **nunca por iniciativa propia, tampoco "para comprobar"**; una autorización no vale para la siguiente vez |
-| Ediciones de ficheros, andamiaje de proyectos, lecturas y diagnósticos de solo lectura | **Git**: ni commit ni push, ni ofrecerlo. Al cerrar, proponer mensaje y lista de archivos |
+| Ediciones de ficheros, andamiaje de proyectos, lecturas y diagnósticos de solo lectura | **Git**: ni commit ni push, ni ofrecerlo. Al cerrar cada paso, proponer mensaje (qué y por qué) y lista de archivos |
 | | **Cualquier ejecución contra una base de datos**: se entrega el script y el paso exacto |
 | | **Cambios en servidores**: comandos de uno en uno, un bloque PowerShell por paso con lo que hace y la salida esperada, esperando su salida antes del siguiente |
 
@@ -74,7 +84,7 @@ Todo proyecto Tecnintegra tiene en su raíz (plantilla `JMMFH/plantilla-proyecto
 | `Documentacion/decisiones/` | Registro de decisiones de diseño, una por archivo |
 | `Documentacion/diseno/` | Resúmenes de los chats de diseño hechos en claude.ai |
 | `Documentacion/memoria/` | Memorias de Claude Code del proyecto (aprendizajes, feedback, referencias), versionadas |
-| `.claude/commands/` | `/inicio`, `/cierre`, `/funcionalidad`, `/mapa`, `/decision`, `/importar-diseno` |
+| `.claude/commands/` | `/inicio`, `/cierre`, `/funcionalidad`, `/mapa`, `/retro`, `/decision`, `/importar-diseno` |
 
 - Si un proyecto no tiene estos archivos, proponer crearlos desde la plantilla antes de empezar.
 - Al empezar una sesión, leer `ESTADO.md` y `PENDIENTES.md` (el hook de inicio los carga; si no aparecen, leerlos). Leer también `Documentacion/memoria/` cuando exista.
